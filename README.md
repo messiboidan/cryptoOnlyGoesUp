@@ -14,17 +14,17 @@ Establish wallet
 
 while(true){
 	For each crypto{
-    if(i have some coin){
-      if(new purchase was made){
-        Update coin amount and purchase price for that coin
-      }
-      Else if(old purchase){
-        Check current value of coin I have
-        if(% change >= 10){
-          Sell & report
-        }
-      }
-    }
+    		if(i have some coin){
+     			if(new purchase was made){
+        			Update coin amount and purchase price for that coin
+      			}
+			Else if(old purchase){
+				Check current value of coin I have
+				if(% change >= 10){
+			  		Sell & report
+				}
+		      	}
+    		}
 
 	}
 	Sleep 5 min
