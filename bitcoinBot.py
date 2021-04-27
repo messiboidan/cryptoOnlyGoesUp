@@ -1,6 +1,9 @@
 from coinbase.wallet.client import Client
 from time import sleep
 from data import percentage_change, api_key, api_secret
+import mysql.connector
+
+
 
 #https://developers.coinbase.com/docs/wallet/guides/buy-sell
 
