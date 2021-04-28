@@ -29,9 +29,9 @@ start_price = client.get_spot_price(currency_pair=currencypair)
 
 #method to calculate the % change in price. Returns float.
 #(d2 - d1) / d1
-def percentage_change( begin_price, end_price):
-    end = float(end_price)
-    return (end - (float(begin_price)))/(float(begin_price))
+def percentage_change( beginPrice, endPrice):
+    end = float(endPrice)
+    return (end - (float(beginPrice)))/(float(beginPrice))
 
 
 
