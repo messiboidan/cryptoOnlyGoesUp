@@ -40,6 +40,9 @@ def shouldSell(marker, boughtAt, desiredGrowth):
         return True
     else: return False
 
+def checkWallet(marker, client):
+    
+
 
 
 #Creating the loop
