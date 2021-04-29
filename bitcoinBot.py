@@ -13,8 +13,8 @@ client = Client(api_key, api_secret)
 
 
 #Take user input
-user_limit_order = float(input("Enter a price for your Bitcoin limit order (USD): "))
-user_amount_spent = float(input("Enter how much you want to spend (USD): "))
+user_limit_order = 10
+user_amount_spent = 10
 user_desired_percentage = float(input("Enter what percent you want to sell at as a decimal (.05 == 5%): "))
 
 currencypair = 'ETH-USD'
@@ -41,7 +41,8 @@ def shouldSell(marker, boughtAt, desiredGrowth):
     else: return False
 
 def checkWallet(marker, client):
-    
+    #TODO write a method that figures out how much of a given coin I have.
+    pass
 
 
 
@@ -50,9 +51,12 @@ def checkWallet(marker, client):
 while(True):
 
     #open file and read all content
-    coinInfoFile = open('coinInfo.txt', 'w+')
-    coinInfoList = coinInfoFile.readlines()
-    
+    #TODO fix this line, right now readlines isn't doing anything 
+    coinInfoFile = open("coinInfo.txt", "r")
+    coinInfoList = coinInfoFile.read()
+    print(coinInfoList)
+
+    coinInfoFile.close()
     #make while loop to iterate through each coin
     listLen = len(coinInfoList)
     i = 0
@@ -62,11 +66,12 @@ while(True):
         oldPrice = coinInfoList[i]
         i+=1
         #TODO figure out how to update oldPrice in the event that a coin was purchased
-        
+        print(client.get_spot_price(currency_pair=currencypair))
         #If there is money in the account. check to see if it should be sold
         if(oldPrice != 0):
             if(shouldSell(currencypair, oldPrice, user_desired_percentage)):
                 #TODO sell coin
+                pass
     
 
     #Reset currents and find percentage change
