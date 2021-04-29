@@ -1,6 +1,7 @@
 from coinbase.wallet.client import Client
 from time import sleep
-from data import api_key, api_secret
+import sqlite3
+#from data import api_key, api_secret
 
 
 
@@ -8,7 +9,7 @@ from data import api_key, api_secret
 #https://developers.coinbase.com/docs/wallet/guides/buy-sell
 
 #Setting up coinbase client
-client = Client(api_key, api_secret)
+#client = Client(api_key, api_secret)
 #payment_method = client.get_payment_methods()[0] //USED TO GRAB PAYMENT ID TO ACTUALLY MAKE THE PURCHASE
 
 
@@ -19,7 +20,7 @@ user_desired_percentage = float(input("Enter what percent you want to sell at as
 
 currencypair = 'ETH-USD'
 
-start_price = client.get_spot_price(currency_pair=currencypair)
+#start_price = client.get_spot_price(currency_pair=currencypair)
 
 
 #method to calculate the % change in price. Returns float.
@@ -50,51 +51,31 @@ def checkWallet(marker, client):
 
 while(True):
 
-    #open file and read all content
-    #TODO fix this line, right now readlines isn't doing anything 
-    coinInfoFile = open("coinInfo.txt", "r")
-    coinInfoList = coinInfoFile.read()
-    print(coinInfoList)
 
-    coinInfoFile.close()
-    #make while loop to iterate through each coin
-    listLen = len(coinInfoList)
-    i = 0
-    while(i < listLen):
-        currencypair = coinInfoList[i] + '-USD'
-        i+=1
-        oldPrice = coinInfoList[i]
-        i+=1
-        #TODO figure out how to update oldPrice in the event that a coin was purchased
-        print(client.get_spot_price(currency_pair=currencypair))
-        #If there is money in the account. check to see if it should be sold
-        if(oldPrice != 0):
-            if(shouldSell(currencypair, oldPrice, user_desired_percentage)):
-                #TODO sell coin
-                pass
+    #TODO create database that contains the names of each coin and holds the amount held and price they were bought at.
     
 
     #Reset currents and find percentage change
 
-    buy_price = client.get_buy_price(currency_pair=currencypair)
+    #buy_price = client.get_buy_price(currency_pair=currencypair)
 
-    percentage_gainloss = percentage_change(start_price.amount, buy_price.amount)
+    #percentage_gainloss = percentage_change(start_price.amount, buy_price.amount)
 
 
     #print bitcoin curent price, and percentage chage
 
-    print('Bitcoin is ' + str(buy_price.amount) + '\nPercent change in last 60 seconds: ' + format(percentage_gainloss, ".3f") + '%')
+    #print('Bitcoin is ' + str(buy_price.amount) + '\nPercent change in last 60 seconds: ' + format(percentage_gainloss, ".3f") + '%')
 
 
     #Within Purchase Threshold
 
-    if(float(buy_price.amount) <= user_limit_order):
+    #if(float(buy_price.amount) <= user_limit_order):
 
 
  #      buy = client.buy(amount=str(user_amount_spent / float(buy_price.amount), currency=currency_code, payment_method=payment_method.id))
 
 
-        print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
+        #print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
 
 
     sleep(60)
@@ -102,7 +83,7 @@ while(True):
 
     #Update start_price
 
-    start_price = buy_price
+    #start_price = buy_price
 
 
 
