@@ -12,13 +12,42 @@ import sqlite3
 #client = Client(api_key, api_secret)
 #payment_method = client.get_payment_methods()[0] //USED TO GRAB PAYMENT ID TO ACTUALLY MAKE THE PURCHASE
 
+#Construct database
+conn = sqlite3.connect('PriceAndBuyData')
+
+cur = conn.cursor()
+
+#Create a table to keep track of coins and their prices.
+cur.execute("""CREATE TABLE coinListing (
+    ID INT PRIMARY KEY, 
+    CoinName text,
+    DailyHigh real,
+    DailyLow real,
+    MonthlyHigh real,
+    MonthlyLow real
+    )""")
+
+#Table to keep track of my purchases
+cur.execute("""CREATE TABLE myPurchases (
+    CoinName text, 
+    PurchasePrice real,
+    PurchaseAmount real, 
+    PurchaseDate int,
+    )""")
+
+
+#List of coins to provide function for.
+currencyList = ['ETH-USD', 'BTC-USD', 'BCH-USD', 'MKR-USD', 'COMP-USD', 'ETC-USD', 'XLM-USD']
+
+i = 0
+while i < len(currencyList):
+    currencyPair = currencyList[i]
+
+
+
 
 #Take user input
-user_limit_order = 10
-user_amount_spent = 10
 user_desired_percentage = float(input("Enter what percent you want to sell at as a decimal (.05 == 5%): "))
-
-currencypair = 'ETH-USD'
 
 #start_price = client.get_spot_price(currency_pair=currencypair)
 
@@ -28,7 +57,6 @@ currencypair = 'ETH-USD'
 def percentage_change( beginPrice, endPrice):
     end = float(endPrice)
     return (end - (float(beginPrice)))/(float(beginPrice))
-
 
 #method to determine if a coin should be sold
 #return true if % change is >= desired growth
@@ -45,14 +73,10 @@ def checkWallet(marker, client):
     #TODO write a method that figures out how much of a given coin I have.
     pass
 
-
-
 #Creating the loop
 
 while(True):
 
-
-    #TODO create database that contains the names of each coin and holds the amount held and price they were bought at.
     
 
     #Reset currents and find percentage change
@@ -61,21 +85,14 @@ while(True):
 
     #percentage_gainloss = percentage_change(start_price.amount, buy_price.amount)
 
-
     #print bitcoin curent price, and percentage chage
 
     #print('Bitcoin is ' + str(buy_price.amount) + '\nPercent change in last 60 seconds: ' + format(percentage_gainloss, ".3f") + '%')
 
-
     #Within Purchase Threshold
 
-    #if(float(buy_price.amount) <= user_limit_order):
 
-
- #      buy = client.buy(amount=str(user_amount_spent / float(buy_price.amount), currency=currency_code, payment_method=payment_method.id))
-
-
-        #print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
+    #print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
 
 
     sleep(60)
