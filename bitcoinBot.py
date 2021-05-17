@@ -41,22 +41,27 @@ cur.execute("""CREATE TABLE IF NOT EXISTS myPurchases (
 
 #List of coins to provide function for.
 currencyList = ['ETH-USD', 'BTC-USD', 'BCH-USD', 'MKR-USD', 'COMP-USD', 'ETC-USD', 'XLM-USD']
+currencyMarkers = ['ETH', 'BTC', 'BCH', 'MKR', 'COMP', 'ETC', 'XLM']
 
 #TODO Loop to add each coin into the database.
 i = 0
 while i < len(currencyList):
-    currencyPair = currencyList[i]
     
+    acc = client.get_account(currencyMarkers[i])
+    print(acc.get('currency'))
+    print(acc.get('id'))
+    print(acc.get('native_balance'))
+
     i+=1
 
-acc = client.get_account('BTC')
-#print(acc)
-print(client.get_buys(bitcoinID))
+#returns a dictionary with primary account info for that coin
+ #[1].get('name')
+#print(client.get_buys(bitcoinID))
 
 
 
 #Take user input
-user_desired_percentage = float(input("Enter what percent increase you want to sell at as a decimal (.05 == 5%): "))
+#user_desired_percentage = float(input("Enter what percent increase you want to sell at as a decimal (.05 == 5%): "))
 
 #start_price = client.get_spot_price(currency_pair=currencypair)
 
