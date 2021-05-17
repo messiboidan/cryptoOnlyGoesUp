@@ -1,13 +1,13 @@
 from coinbase.wallet.client import Client
-from data import apiKey, apiSecret, bitcoinID
+from data import apiKey, apiSecret
 from time import sleep
 import sqlite3
 
 
 
-#https://developers.coinbase.com/docs/wallet/guides/buy-sell
+#https://developers.coinbase.com/docs/wallet/guides/buy-sell  - link to coinbase api
 
-
+#store data from data.py
 api_key = apiKey
 api_secret = apiSecret
 
@@ -47,10 +47,13 @@ currencyMarkers = ['ETH', 'BTC', 'BCH', 'MKR', 'COMP', 'ETC', 'XLM']
 i = 0
 while i < len(currencyList):
     
+    #pulls relevant account info.
     acc = client.get_account(currencyMarkers[i])
     print(acc.get('currency'))
     print(acc.get('id'))
     print(acc.get('native_balance'))
+
+    #TODO update tables.
 
     i+=1
 
