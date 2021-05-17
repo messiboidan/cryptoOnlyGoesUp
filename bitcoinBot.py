@@ -1,16 +1,18 @@
 from coinbase.wallet.client import Client
+from data import apiKey, apiSecret, bitcoinID
 from time import sleep
 import sqlite3
-#from data import api_key, api_secret
-
 
 
 
 #https://developers.coinbase.com/docs/wallet/guides/buy-sell
 
+
+api_key = apiKey
+api_secret = apiSecret
+
 #Setting up coinbase client
-#client = Client(api_key, api_secret)
-#payment_method = client.get_payment_methods()[0] //USED TO GRAB PAYMENT ID TO ACTUALLY MAKE THE PURCHASE
+client = Client(api_key, api_secret)
 
 #Construct database
 conn = sqlite3.connect('PriceAndBuyData')
@@ -18,8 +20,8 @@ conn = sqlite3.connect('PriceAndBuyData')
 cur = conn.cursor()
 
 #Create a table to keep track of coins and their prices.
-cur.execute("""CREATE TABLE coinListing (
-    ID INT PRIMARY KEY, 
+#May be helpful if I decide to implement buy conditions.
+cur.execute("""CREATE TABLE IF NOT EXISTS coinListing (
     CoinName text,
     DailyHigh real,
     DailyLow real,
@@ -28,26 +30,33 @@ cur.execute("""CREATE TABLE coinListing (
     )""")
 
 #Table to keep track of my purchases
-cur.execute("""CREATE TABLE myPurchases (
+cur.execute("""CREATE TABLE IF NOT EXISTS myPurchases (
     CoinName text, 
     PurchasePrice real,
     PurchaseAmount real, 
-    PurchaseDate int,
+    PurchaseDate int
     )""")
+
 
 
 #List of coins to provide function for.
 currencyList = ['ETH-USD', 'BTC-USD', 'BCH-USD', 'MKR-USD', 'COMP-USD', 'ETC-USD', 'XLM-USD']
 
+#TODO Loop to add each coin into the database.
 i = 0
 while i < len(currencyList):
     currencyPair = currencyList[i]
+    
+    i+=1
 
+acc = client.get_account('BTC')
+#print(acc)
+print(client.get_buys(bitcoinID))
 
 
 
 #Take user input
-user_desired_percentage = float(input("Enter what percent you want to sell at as a decimal (.05 == 5%): "))
+user_desired_percentage = float(input("Enter what percent increase you want to sell at as a decimal (.05 == 5%): "))
 
 #start_price = client.get_spot_price(currency_pair=currencypair)
 
@@ -102,7 +111,4 @@ while(True):
 
     #start_price = buy_price
 
-
-
-
-
+conn.close()
