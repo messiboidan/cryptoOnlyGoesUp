@@ -49,13 +49,18 @@ while i < len(currencyList):
     
     #pulls relevant account info.
     acc = client.get_account(currencyMarkers[i])
-    print(acc.get('currency'))
-    print(acc.get('id'))
-    print(acc.get('native_balance'))
-
+    print('Coin: ' + acc.get('currency'))
+    print('ID: ' + acc.get('id'))
+    print('Balance: ' + str(acc.get('native_balance')))
+    
+    priceInfo = client.get_spot_price(currency_pair = currencyList[i])
+    print('Current price: ' + priceInfo.get('amount'))
+    
+    print()
     #TODO update tables.
 
-    i+=1
+
+    i +=1
 
 #returns a dictionary with primary account info for that coin
  #[1].get('name')
@@ -92,7 +97,7 @@ def checkWallet(marker, client):
 
 #Creating the loop
 
-while(True):
+#while(True):
 
     
 
@@ -112,7 +117,7 @@ while(True):
     #print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
 
 
-    sleep(60)
+    #sleep(60)
 
 
     #Update start_price
