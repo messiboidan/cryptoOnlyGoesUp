@@ -1,7 +1,8 @@
+from functools import total_ordering
 from coinbase.wallet.client import Client
 from data import apiKey, apiSecret
 from time import sleep
-import sqlite3
+
 
 
 
@@ -14,86 +15,101 @@ api_secret = apiSecret
 #Setting up coinbase client
 client = Client(api_key, api_secret)
 
-#Construct database
-conn = sqlite3.connect('PriceAndBuyData')
-
-cur = conn.cursor()
-
-#Create a table to keep track of coins and their prices.
-#May be helpful if I decide to implement buy conditions.
-cur.execute("""CREATE TABLE IF NOT EXISTS coinListing (
-    CoinName text,
-    DailyHigh real,
-    DailyLow real,
-    MonthlyHigh real,
-    MonthlyLow real
-    )""")
-
-#Table to keep track of my purchases
-cur.execute("""CREATE TABLE IF NOT EXISTS myPurchases (
-    CoinName text, 
-    PurchasePrice real,
-    PurchaseAmount real, 
-    PurchaseDate int
-    )""")
 
 
+#Take user input for desired gains.
+user_desired_percentage = float(input("Enter what percent increase you want to sell at: "))
 
 #List of coins to provide function for.
 currencyList = ['ETH-USD', 'BTC-USD', 'BCH-USD', 'MKR-USD', 'COMP-USD', 'ETC-USD', 'XLM-USD']
 currencyMarkers = ['ETH', 'BTC', 'BCH', 'MKR', 'COMP', 'ETC', 'XLM']
 
-#TODO Loop to add each coin into the database.
+
+#method to calculate the % change in price. Returns float.
+#(d2 - d1) / d1
+def percentage_change( beginPrice, endPrice):
+    start = float(beginPrice)
+    stop = float(endPrice)
+    change = (stop - start) / start
+    return change * 100
+
+#method to determine if a coin should be sold
+#return true if % change is >= desired growth
+def shouldSell(marker, boughtAt, currentPrice, desiredGrowth):
+
+    #checks if it should be sold or not
+    change = percentage_change(boughtAt, currentPrice)
+    if(change >= desiredGrowth):
+        print("Time to sell. Your " + marker + " has gone up " + str(change) + "!")
+        return True
+    else: 
+        print("No sale yet, your " + marker + " has changed " + str(change) + "%.")
+        return False
+
+#While loop to get info on each coin
 i = 0
 while i < len(currencyList):
     
     #pulls relevant account info.
     acc = client.get_account(currencyMarkers[i])
-    print('Coin: ' + acc.get('currency'))
-    print('ID: ' + acc.get('id'))
-    print('Balance: ' + str(acc.get('native_balance')))
+
+    #update variables
+    currentCurrency = acc.currency
+    currentID = acc.id
+    currentBal = acc.balance.amount
+    priceInfo = client.get_spot_price(currency_pair = currencyList[i]).amount
+
+
+
+
+    print('Coin: ' + currentCurrency)
+    print('ID: ' + currentID)
+    print('Balance: ' + currentBal)
+    print('Current price: $' + priceInfo)
     
-    priceInfo = client.get_spot_price(currency_pair = currencyList[i])
-    print('Current price: ' + priceInfo.get('amount'))
+    #Check %change if there is a current balance.
     
+    
+    #saves all buys on an account
+    trans = client.get_buys(currentID)
+
+    #checks if there has been any buys
+    if(len(trans.data) > 0):
+        recentBuy = trans.data.pop()
+        
+        #saves the price in usd that it cost to buy 1 of the given coin at the time of the most recent purchase
+        recentBuyPrice = (recentBuy.unit_price.amount)
+        print('Last purchase price: $' + recentBuyPrice)
+        
+        #check if there is any coin and then if I should sell it.
+        if(float(currentBal) > 0):
+            print('You have a balance. Time to check if you should sell')
+            doIsell = shouldSell(currentCurrency, recentBuyPrice, priceInfo, user_desired_percentage)
+            
+            #sell crypto if doIsell == true
+            if(doIsell):
+                #client.sell(currentID, total_ordering)
+                pass
+        else:
+            print('You currently dont have any ' + currentCurrency + '.')
+            difference = str(percentage_change(recentBuyPrice, priceInfo))
+            print('Since your last purchase the price has changed ' + difference + '%.')
+
+    else:
+        print("Haven't purchased " + currentCurrency + " before.")
+
+
+    
+    #formatting
     print()
-    #TODO update tables.
-
-
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    print()
+    
+    #increment counter
     i +=1
 
-#returns a dictionary with primary account info for that coin
- #[1].get('name')
-#print(client.get_buys(bitcoinID))
 
 
-
-#Take user input
-#user_desired_percentage = float(input("Enter what percent increase you want to sell at as a decimal (.05 == 5%): "))
-
-#start_price = client.get_spot_price(currency_pair=currencypair)
-
-
-#method to calculate the % change in price. Returns float.
-#(d2 - d1) / d1
-def percentage_change( beginPrice, endPrice):
-    end = float(endPrice)
-    return (end - (float(beginPrice)))/(float(beginPrice))
-
-#method to determine if a coin should be sold
-#return true if % change is >= desired growth
-#takes 3 params: the 3-letter name of the coin, the price it was bought at, and the desired growth
-def shouldSell(marker, boughtAt, desiredGrowth):
-    #finds current price of given coin
-    currentPrice = client.get_spot_price(currency_pair=marker)
-    #checks if it should be sold or not
-    if(percentage_change(boughtAt, currentPrice.amount) >= desiredGrowth):
-        return True
-    else: return False
-
-def checkWallet(marker, client):
-    #TODO write a method that figures out how much of a given coin I have.
-    pass
 
 #Creating the loop
 
@@ -101,27 +117,5 @@ def checkWallet(marker, client):
 
     
 
-    #Reset currents and find percentage change
 
-    #buy_price = client.get_buy_price(currency_pair=currencypair)
-
-    #percentage_gainloss = percentage_change(start_price.amount, buy_price.amount)
-
-    #print bitcoin curent price, and percentage chage
-
-    #print('Bitcoin is ' + str(buy_price.amount) + '\nPercent change in last 60 seconds: ' + format(percentage_gainloss, ".3f") + '%')
-
-    #Within Purchase Threshold
-
-
-    #print("Bought $" + str(user_amount_spent) + " or " + str(user_amount_spent / float(buy_price.amount)) + " bitcoin at " + buy_price.amount)
-
-
-    #sleep(60)
-
-
-    #Update start_price
-
-    #start_price = buy_price
-
-conn.close()
+    #sleep(120)
